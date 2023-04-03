@@ -2,32 +2,19 @@ import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
 import Notification from './components/Notification'
 import noteService from './services/notes'
-import loginService from './services/login'
-import LoginForm from './components/LoginForm'
+
 import NoteForm from './components/NoteForm'
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
-
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
       setNotes(initialNotes)
     })
-  }, [])
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      noteService.setToken(user.token)
-    }
   }, [])
 
   const addNote = (noteObject) => {
@@ -55,25 +42,6 @@ const App = () => {
       })
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const newUser = await loginService.login({ username, password })
-
-      window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(newUser))
-      noteService.setToken(newUser.token)
-
-      setUser(newUser)
-      setUsername('')
-      setPassword('')
-    } catch (e) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }
-
   const handleLogout = () => {
     setUser(null)
     noteService.setToken(null)
@@ -88,17 +56,7 @@ const App = () => {
 
       <Notification message={errorMessage} />
 
-      {user ? (
-        <NoteForm handleLogout={handleLogout} addNote={addNote} />
-      ) : (
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={(event) => setUsername(event.target.value)}
-          handlePasswordChange={(event) => setPassword(event.target.value)}
-          handleSubmit={handleLogin}
-        />
-      )}
+      <NoteForm handleLogout={handleLogout} addNote={addNote} />
 
       <div>
         <button onClick={() => setShowAll(!showAll)}>

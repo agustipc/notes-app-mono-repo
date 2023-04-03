@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter, Link, Route, Routes, Navigate } from 'react-router-dom'
+import { NoteDetail } from './components/NoteDetail'
+import Login from './Login'
+import Notes from './Notes'
+import noteService from './services/notes'
 
 const Home = () => <h1>Home Pape</h1>
-const Notes = () => <h1>Notes</h1>
 const Users = () => <h1>Users</h1>
 
 const inlineStyles = {
@@ -9,44 +13,54 @@ const inlineStyles = {
 }
 
 const App = () => {
-  const [page, setPage] = useState(() => {
-    const { pathname } = window.location
-    const page = pathname.slice(1)
-    return page
+  const [notes, setNotes] = useState([])
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    noteService.getAll().then((notes) => {
+      setNotes(notes)
+    })
   })
 
-  const getContent = () => {
-    switch (page) {
-      case 'users':
-        return <Users />
-      case 'notes':
-        return <Notes />
-      default:
-        return <Home />
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
     }
-  }
-
-  const toPage = (page) => (event) => {
-    event.preventDefault()
-    window.history.pushState(null, '', `/${page}`)
-    setPage(page)
-  }
+  }, [])
 
   return (
-    <div>
+    <BrowserRouter>
       <header>
-        <a href="#" onClick={toPage('')} style={inlineStyles}>
+        <Link to="/" style={inlineStyles}>
           Home
-        </a>
-        <a href="#" onClick={toPage('notes')} style={inlineStyles}>
+        </Link>
+        <Link to="/notes" style={inlineStyles}>
           Notes
-        </a>
-        <a href="#" onClick={toPage('users')} style={inlineStyles}>
+        </Link>
+        <Link to="/users" style={inlineStyles}>
           Users
-        </a>
+        </Link>
+        {user ? (
+          <em>Logged as {user.name}</em>
+        ) : (
+          <Link to="/login" style={inlineStyles}>
+            Login
+          </Link>
+        )}
       </header>
-      {getContent()}
-    </div>
+
+      <Routes>
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/notes/:noteId" element={<NoteDetail notes={notes} />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
