@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { BrowserRouter, Link, Route, Routes, Navigate } from 'react-router-dom'
 import { NoteDetail } from './components/NoteDetail'
+import { useNotes } from './hooks/useNotes'
+import { useUser } from './hooks/useUser'
 import Login from './Login'
 import Notes from './Notes'
-import noteService from './services/notes'
 
 const Home = () => <h1>Home Pape</h1>
 const Users = () => <h1>Users</h1>
@@ -13,23 +14,8 @@ const inlineStyles = {
 }
 
 const App = () => {
-  const [notes, setNotes] = useState([])
-  const [user, setUser] = useState(null)
-
-  useEffect(() => {
-    noteService.getAll().then((notes) => {
-      setNotes(notes)
-    })
-  })
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      noteService.setToken(user.token)
-    }
-  }, [])
+  const { user } = useUser()
+  const { notes } = useNotes()
 
   return (
     <BrowserRouter>
