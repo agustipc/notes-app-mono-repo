@@ -8,9 +8,26 @@ export const useNotes = () => {
     noteService.getAll().then((notes) => {
       setNotes(notes)
     })
-  })
+  }, [])
+
+  const addNote = (noteObject) => {
+    noteService.create(noteObject).then((returnedNote) => {
+      setNotes(notes.concat(returnedNote))
+    })
+  }
+
+  const toggleImportanceOf = (id) => {
+    const note = notes.find((n) => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    return noteService.update(id, changedNote).then((returnedNote) => {
+      setNotes(notes.map((note) => (note.id !== id ? note : returnedNote)))
+    })
+  }
 
   return {
-    notes
+    notes,
+    addNote,
+    toggleImportanceOf
   }
 }

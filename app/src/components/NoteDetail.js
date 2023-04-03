@@ -8,6 +8,7 @@ export const NoteDetail = ({ notes }) => {
 
   return (
     <div>
+      <h1>Note Detail</h1>
       <h2>{note.content}</h2>
       <div>{note?.user.name}</div>
       <div>
