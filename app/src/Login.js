@@ -37,12 +37,14 @@ export default function Login() {
   }
 
   return (
-    <LoginForm
-      username={username}
-      password={password}
-      handleUsernameChange={(event) => setUsername(event.target.value)}
-      handlePasswordChange={(event) => setPassword(event.target.value)}
-      handleSubmit={handleLogin}
-    />
+    <div className="container">
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={(event) => setUsername(event.target.value)}
+        handlePasswordChange={(event) => setPassword(event.target.value)}
+        handleSubmit={handleLogin}
+      />
+    </div>
   )
 }

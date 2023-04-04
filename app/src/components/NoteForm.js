@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Button } from 'react-bootstrap'
 import Togglable from './Togglable'
 
 export default function NoteForm({ handleLogout, addNote }) {
@@ -32,10 +33,10 @@ export default function NoteForm({ handleLogout, addNote }) {
             value={newNote}
             onChange={handleChange}
           />
-          <button type="submit">save</button>
+          <Button type="submit">save</Button>
         </form>
         <div>
-          <button onClick={handleLogout}>Logout</button>
+          <Button onClick={handleLogout}>Logout</Button>
         </div>
       </Togglable>
     </>

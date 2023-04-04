@@ -5,6 +5,7 @@ import Notification from './components/Notification'
 import NoteForm from './components/NoteForm'
 import { useNotes } from './hooks/useNotes'
 import { useUser } from './hooks/useUser'
+import { Button, Table } from 'react-bootstrap'
 
 const Notes = () => {
   const [showAll, setShowAll] = useState(true)
@@ -34,19 +35,22 @@ const Notes = () => {
       <NoteForm handleLogout={logout} addNote={addNote} />
 
       <div>
-        <button onClick={() => setShowAll(!showAll)}>
+        <Button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
-        </button>
+        </Button>
       </div>
-      <ul>
-        {notesToShow.map((note, i) => (
-          <Note
-            key={i}
-            note={note}
-            toggleImportance={() => changeImportance(note.id)}
-          />
-        ))}
-      </ul>
+      <Table striped>
+        <tbody>
+          {notesToShow.map((note, i) => (
+            <tr key={note.id}>
+              <Note
+                note={note}
+                toggleImportance={() => changeImportance(note.id)}
+              />
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </div>
   )
 }
